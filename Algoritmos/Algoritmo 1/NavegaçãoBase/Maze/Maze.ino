@@ -85,7 +85,7 @@ unsigned long curvaStartTime = 0;
 bool inCurva = false;
 int curvaStage = 0; // 0 = não iniciado, 1 = girando, 2 = avançando
 
-// === Loop ===
+
 void loop() {
   long leftDist = readUltrasonic(lTrig, lEcho);
   long frontDist = readUltrasonic(fTrig, fEcho);
@@ -118,7 +118,7 @@ void loop() {
         curvaStage = 0;
       }
     }
-    return; // evita executar o resto do loop enquanto curva
+    return; 
   }
 
   // === Detecta curva de 90° ===
@@ -141,10 +141,10 @@ void loop() {
 
   // === Prioridade 1: Obstáculo frontal ===
   if (frontDist < frontLimit) {
-    Serial.println("Obstáculo à frente → ré");
+    Serial.println("Obstáculo à frente ré");
     moveBackward(speed);
     delay(300);
-    turnLeft(speed); // leve desvio
+    turnLeft(speed); 
     delay(300);
     stopRobot();
     return;
@@ -152,7 +152,7 @@ void loop() {
 
   // === Prioridade 2: Paredes muito próximas ===
   if (leftDist < minSide) {
-    Serial.println(" Muito perto da esquerda → virar à direita");
+    Serial.println(" Muito perto da esquerda virar à direita");
     turnRight(speed);
     delay(200);
     stopRobot();
@@ -160,7 +160,7 @@ void loop() {
   }
 
   if (rightDist < minSide) {
-    Serial.println(" Muito perto da direita → virar à esquerda");
+    Serial.println(" Muito perto da direita virar à esquerda");
     turnLeft(speed);
     delay(200);
     stopRobot();
@@ -169,15 +169,15 @@ void loop() {
 
   // === Correção suave de alinhamento lateral ===
   if (leftDist < (idealDist - tol)) {
-    Serial.println("↪️ Um pouco perto da esquerda → curva leve à direita");
+    Serial.println(" Um pouco perto da esquerda curva leve à direita");
     turnRight(speed - 30);
   }
   else if (rightDist < (idealDist - tol)) {
-    Serial.println(" Um pouco perto da direita → curva leve à esquerda");
+    Serial.println(" Um pouco perto da direita curva leve à esquerda");
     turnLeft(speed - 30);
   }
   else {
-    Serial.println(" Centralizado → seguir em frente");
+    Serial.println(" Centralizado seguir em frente");
     moveForward(speed);
   }
 

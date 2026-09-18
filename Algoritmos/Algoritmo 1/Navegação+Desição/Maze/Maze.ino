@@ -76,7 +76,7 @@ void stopRobot() {
   digitalWrite(rBack, LOW);
 }
 
-// === Setup ===
+
 void setup() {
   pinMode(lTrig, OUTPUT);
   pinMode(lEcho, INPUT);
@@ -94,7 +94,6 @@ void setup() {
   Serial.println("=== Seguidor de corredor com limites calibrados ===");
 }
 
-// === Loop ===
 void loop() {
   long leftDist = readUltrasonic(lTrig, lEcho);
   long frontDist = readUltrasonic(fTrig, fEcho);
@@ -107,47 +106,46 @@ void loop() {
   Serial.print("  D:");
   Serial.println(rightDist);
 
-  // === NOVA LÓGICA: Decisão de curva 90° + comparação ===
   // === Lógica de curva 90° com decisão de lado ===
   if (frontDist < 6) {
-    Serial.println("🚧 Obstáculo detectado → rotina de decisão iniciada");
+    Serial.println("Obstáculo detectado rotina de decisão iniciada");
     stopRobot();
     delay(300);
 
-    // 1️⃣ Gira 90° à esquerda e mede o lado esquerdo
+    //  Gira 90° à esquerda e mede o lado esquerdo
     turnLeft(speed);
     delay(turnTime90);
     stopRobot();
     delay(delayMeasure);
     long leftCheck = readUltrasonic(fTrig, fEcho); // frente agora aponta para a esquerda
 
-    // 2️⃣ Gira 180° à direita e mede o lado direito
+    // Gira 180° à direita e mede o lado direito
     turnRight(speed);
     delay(turnTime90 * 2);
     stopRobot();
     delay(delayMeasure);
     long rightCheck = readUltrasonic(fTrig, fEcho); // frente agora aponta para a direita
 
-    // 3️⃣ Retorna à posição neutra (90° à esquerda)
+    // Retorna à posição neutra (90° à esquerda)
     turnLeft(speed);
     delay(turnTime90);
     stopRobot();
 
-    Serial.print("🔄 Comparando -> E:");
+    Serial.print("Comparando -> E:");
     Serial.print(leftCheck);
     Serial.print(" D:");
     Serial.println(rightCheck);
 
-    // 4️⃣ Decide o lado mais livre
+    // Decide o lado mais livre
     if (rightCheck > leftCheck + tol) {
-      Serial.println("➡️ Direita está mais livre → virar 90° à DIREITA e seguir");
+      Serial.println("Direita está mais livre  virar 90° à DIREITA e seguir");
       turnRight(speed);
       delay(turnTime90);
       stopRobot();
       moveForward(speed);
     } 
     else if (leftCheck > rightCheck + tol) {
-      Serial.println("⬅️ Esquerda está mais livre → virar 90° à ESQUERDA e seguir");
+      Serial.println("Esquerda está mais livre  virar 90° à ESQUERDA e seguir");
       turnLeft(speed);
       delay(turnTime90);
       stopRobot();
@@ -155,7 +153,7 @@ void loop() {
     } 
 
     else if (frontDist < frontLimit && leftDist < minSide && rightDist < minSide) {
-    Serial.println("🚫 Beco sem saída detectado!");
+    Serial.println("Beco sem saída detectado!");
     moveBackward(speed);
     delay(400); // recuar
     stopRobot();
@@ -167,7 +165,7 @@ void loop() {
 }
 
     else {
-      Serial.println("⬛ Distâncias semelhantes → seguir em frente");
+      Serial.println("Distâncias semelhantes → seguir em frente");
       moveForward(speed);
     }
 
@@ -189,7 +187,7 @@ void loop() {
 
   // === Prioridade 2: Paredes muito próximas ===
   if (leftDist < minSide) {
-    Serial.println("⬅️ Muito perto da esquerda → virar à direita");
+    Serial.println(" Muito perto da esquerda  virar à direita");
     turnRight(speed);
     delay(200);
     stopRobot();
@@ -197,7 +195,7 @@ void loop() {
   }
 
   if (rightDist < minSide) {
-    Serial.println("➡️ Muito perto da direita → virar à esquerda");
+    Serial.println("Muito perto da direita virar à esquerda");
     turnLeft(speed);
     delay(200);
     stopRobot();
@@ -206,15 +204,15 @@ void loop() {
 
   // === Correção suave de alinhamento lateral ===
   if (leftDist < (idealDist - tol)) {
-    Serial.println("↪️ Um pouco perto da esquerda → curva leve à direita");
+    Serial.println(" Um pouco perto da esquerda  curva leve à direita");
     turnRight(speed - 30);
   }
   else if (rightDist < (idealDist - tol)) {
-    Serial.println("↩️ Um pouco perto da direita → curva leve à esquerda");
+    Serial.println("Um pouco perto da direita  curva leve à esquerda");
     turnLeft(speed - 30);
   }
   else {
-    Serial.println(" Centralizado → seguir em frente");
+    Serial.println(" Centralizado  seguir em frente");
     moveForward(speed);
   }
 
